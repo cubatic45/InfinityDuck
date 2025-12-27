@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=duck
-PKG_VERSION:=2025.09.27
+PKG_VERSION:=2025.07.14
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/LostAttractor/dae.git
-PKG_SOURCE_VERSION:=5abd651d985309031bf99eafcaf0dcfc1e9551f3
+PKG_SOURCE_URL:=https://github.com/daeuniverse/dae.git
+PKG_SOURCE_VERSION:=344666ba7ff5b84e8819926e6366f0399a3b40de
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=AGPL-3.0-only
@@ -38,7 +38,7 @@ define Package/duck/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  URL:=https://github.com/LostAttractor/dae
+  URL:=https://github.com/duckuniverse/dae
 endef
 
 define Package/duck

@@ -1,9 +1,16 @@
+# Scheduled runs always use the workflow file from the repository default branch
+# (e.g. main). If checkout still points at an upstream repo, pushes will target that
+# remote and fail when the upstream is archived or read-only.
 name: dependabot
 
 on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   get_current_info:
@@ -16,14 +23,14 @@ jobs:
         name: checkout
         uses: actions/checkout@v4
         with:
-          repository: JohnsonRan/InfinityDuck
+          repository: ${{ github.repository }}
           ref: main
           path: InfinityDuck
       - id: info
         name: info
         run: |
           echo "pkg_source_version=$(grep "PKG_SOURCE_VERSION:=" InfinityDuck/duck/Makefile | cut -d '=' -f 2)" >> $GITHUB_OUTPUT
-          echo "pkg_build_version=$(grep "PKG_BUILD_VERSION:=" InfinityDuck/duck/Makefile | cut -d '=' -f 2)" >> $GITHUB_OUTPUT
+          echo "pkg_build_version=$( { grep "PKG_BUILD_VERSION:=" InfinityDuck/duck/Makefile 2>/dev/null || true; } | cut -d '=' -f 2 )" >> $GITHUB_OUTPUT
   get_latest_info:
     runs-on: ubuntu-latest
     outputs:
@@ -57,7 +64,7 @@ jobs:
         name: checkout
         uses: actions/checkout@v4
         with:
-          repository: JohnsonRan/InfinityDuck
+          repository: ${{ github.repository }}
           ref: main
           path: InfinityDuck
       - id: update

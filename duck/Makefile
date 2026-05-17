@@ -32,6 +32,23 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/bpf.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
+GEODATA_VER:=202605162239
+GEOIP_FILE:=geoip.dat.$(GEODATA_VER)
+define Download/geoip
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEODATA_VER)/
+  URL_FILE:=geoip.dat
+  FILE:=$(GEOIP_FILE)
+  HASH:=e5fb5bde7ad1377500fc780b3e02c3203916ccfd82cba854c1a7a13d58c462d3
+endef
+
+GEOSITE_FILE:=geosite.dat.$(GEODATA_VER)
+define Download/geosite
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEODATA_VER)/
+  URL_FILE:=geosite.dat
+  FILE:=$(GEOSITE_FILE)
+  HASH:=b054483a82f678440e90c2686e5280c5514ec8c9ae446e3c3ed3e17c82a54521
+endef
+
 UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
 
 define Package/duck/Default
@@ -53,14 +70,16 @@ endef
 define Package/duck-geoip
   $(call Package/duck/Default)
   TITLE:=geoip for duck
-  DEPENDS:=+duck +v2ray-geoip
+  DEPENDS:=+duck
+  VERSION:=$(GEODATA_VER)-$(PKG_RELEASE)
   PKGARCH:=all
 endef
 
 define Package/duck-geosite
   $(call Package/duck/Default)
   TITLE:=geosite for duck
-  DEPENDS:=+duck +v2ray-geosite
+  DEPENDS:=+duck
+  VERSION:=$(GEODATA_VER)-$(PKG_RELEASE)
   PKGARCH:=all
 endef
 
@@ -86,6 +105,16 @@ duck_CFLAGS:= \
 	-DMAX_MATCH_SET_LEN=1024 \
 	-I$(BPF_HEADERS_DIR)/tools/lib \
 	-I$(BPF_HEADERS_DIR)/arch/$(BPF_KARCH)/include/asm/mach-generic
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+ifneq ($(CONFIG_PACKAGE_duck-geoip),)
+	$(call Download,geoip)
+endif
+ifneq ($(CONFIG_PACKAGE_duck-geosite),)
+	$(call Download,geosite)
+endif
+endef
 
 define Build/Compile
 	( \
@@ -119,12 +148,12 @@ endef
 
 define Package/duck-geoip/install
 	$(INSTALL_DIR) $(1)/usr/share/dae
-	$(LN) ../v2ray/geoip.dat $(1)/usr/share/dae/geoip.dat
+	$(INSTALL_DATA) $(DL_DIR)/$(GEOIP_FILE) $(1)/usr/share/dae/geoip.dat
 endef
 
 define Package/duck-geosite/install
 	$(INSTALL_DIR) $(1)/usr/share/dae
-	$(LN) ../v2ray/geosite.dat $(1)/usr/share/dae/geosite.dat
+	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/usr/share/dae/geosite.dat
 endef
 
 $(eval $(call GoBinPackage,duck))

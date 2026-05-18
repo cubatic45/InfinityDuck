@@ -33,6 +33,7 @@ include $(INCLUDE_DIR)/bpf.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 GEODATA_VER:=202605162239
+GEO_PKG_VERSION:=$(shell echo '$(GEODATA_VER)' | sed -E 's/^(.{4})(.{2})(.{2})(.*)$$/\1.\2.\3.\4/')
 GEOIP_FILE:=geoip.dat.$(GEODATA_VER)
 define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEODATA_VER)/
@@ -71,7 +72,7 @@ define Package/duck-geoip
   $(call Package/duck/Default)
   TITLE:=geoip for duck
   DEPENDS:=+duck
-  VERSION:=$(GEODATA_VER)-$(PKG_RELEASE)
+  VERSION:=$(GEO_PKG_VERSION)-r$(PKG_RELEASE)
   PKGARCH:=all
 endef
 
@@ -79,7 +80,7 @@ define Package/duck-geosite
   $(call Package/duck/Default)
   TITLE:=geosite for duck
   DEPENDS:=+duck
-  VERSION:=$(GEODATA_VER)-$(PKG_RELEASE)
+  VERSION:=$(GEO_PKG_VERSION)-r$(PKG_RELEASE)
   PKGARCH:=all
 endef
 

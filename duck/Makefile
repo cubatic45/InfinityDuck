@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=duck
-PKG_VERSION:=2026.05.18
+PKG_VERSION:=2026.05.31
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
-PKG_SOURCE_VERSION:=44f8f0d18df95063d90e7b0e3270546b307d8c38
+PKG_SOURCE_VERSION:=ab1618181a1ccd51cde447e6f258998568570365
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=AGPL-3.0-only
@@ -33,7 +33,7 @@ include $(INCLUDE_DIR)/bpf.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 GEODATA_VER:=202605162239
-GEO_PKG_VERSION:=$(shell echo '$(GEODATA_VER)' | sed -E 's/^(.{4})(.{2})(.{2})(.*)$$/\1.\2.\3.\4/')
+GEO_PKG_VERSION:=2026.05.31
 GEOIP_FILE:=geoip.dat.$(GEODATA_VER)
 define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEODATA_VER)/

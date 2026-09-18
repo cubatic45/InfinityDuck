@@ -1,5 +1,6 @@
 name: Editor regression tests
 on:
+  workflow_call:
   push:
     paths:
       - 'luci-app-duck/**'

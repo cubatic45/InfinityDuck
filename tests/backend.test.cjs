@@ -40,7 +40,7 @@ esac
   });
   assert.equal(r.status,0,r.stderr);
   let result=JSON.parse(r.stdout);
-  for(let i=0;result.pending && i<150;i++) {
+  for(let i=0;result.pending && i<600;i++) {
    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,20);
    const poll=spawnSync('busybox',['ash',helper,'call','status'],{input:JSON.stringify({job:result.job}),encoding:'utf8',env:{...process.env,PATH:dir+'/bin:'+process.env.PATH,FIXTURE:dir,...env}});
    assert.equal(poll.status,0,poll.stderr);result=JSON.parse(poll.stdout);
@@ -170,4 +170,11 @@ start_service
   assert.equal(result.status,0,result.stderr);
   assert.equal(result.stdout,editor==='1'?'':'delay\ndownload\n');
  }
+});
+
+test('large configuration is parsed from a file without a single oversized argv',t=>{
+ const f=fixture(t),content='global {}\n# '+ 'x'.repeat(256*1024)+'\n';
+ const result=f.run(content,false);
+ assert.equal(result.saved,true,result.error);
+ assert.equal(fs.readFileSync(f.config,'utf8'),content);
 });

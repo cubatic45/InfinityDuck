@@ -7,3 +7,5 @@ json_init() { output_json='{}'; }
 json_add_boolean() { output_json="$(printf '%s' "$output_json" | jq --arg key "$1" --arg val "$2" '. + {($key): ($val == "1")}')"; }
 json_add_string() { output_json="$(printf '%s' "$output_json" | jq --arg key "$1" --arg val "$2" '. + {($key): $val}')"; }
 json_dump() { printf '%s\n' "$output_json"; }
+json_load_file() { input="$(cat "$1")"; printf '%s' "$input" | jq -e 'type == "object"' >/dev/null; }
+json_cleanup() { :; }

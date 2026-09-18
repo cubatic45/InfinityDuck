@@ -30,7 +30,7 @@ CONFIG_PACKAGE_duck-geosite=m
 CONFIG_PACKAGE_luci-app-duck=m
 CONFIG_LUCI_LANG_zh_Hans=y
 CONFIG_PACKAGE_luci-i18n-duck-zh-cn=m
-CONFIG'
+CONFIG
 make defconfig
 for option in USE_APK PACKAGE_duck PACKAGE_duck-geoip PACKAGE_duck-geosite PACKAGE_luci-app-duck PACKAGE_luci-i18n-duck-zh-cn; do
   grep -Eq "^CONFIG_${option}=[ym]$" .config || { echo "Missing build selection: $option"; exit 1; }

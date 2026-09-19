@@ -6,10 +6,7 @@
 				"/etc/duck/config.dae": [ "read" ],
 				"/etc/duck/example.dae": [ "read" ],
 				"/var/log/duck/duck.log": [ "read" ],
-				"/etc/init.d/duck status": [ "exec" ],
-				"/etc/init.d/duck hot_reload": [ "exec" ],
-				"/etc/init.d/duck restart": [ "exec" ],
-				"/bin/chmod 0600 /etc/duck/config.dae": [ "exec" ]
+				"/etc/init.d/duck status": [ "exec" ]
 			},
 			"ubus": {
 				"service": [ "list" ]
@@ -18,8 +15,10 @@
 		},
 		"write": {
 			"file": {
-				"/etc/duck/config.dae": [ "write" ],
 				"/var/log/duck/duck.log": [ "write" ]
+			},
+			"ubus": {
+				"duck.config": [ "save", "status" ]
 			},
 			"uci": [ "duck" ]
 		}

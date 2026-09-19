@@ -5,6 +5,7 @@ USE_PROCD=1
 START=99
 
 extra_command "hot_reload" "Hot-reload service"
+extra_command "editor_apply" "Apply a validated local editor configuration"
 
 CONF="duck"
 PROG="/usr/bin/dae"
@@ -102,12 +103,14 @@ start_service() {
 
 	setup_scheduled_restart
 
-	if [ "$delay" -gt 0 ]; then
+	if [ "$delay" -gt 0 ] && [ "${DUCK_EDITOR_APPLY:-0}" != 1 ]; then
 		log_message "Starting after $delay seconds..."
 		sleep "$delay"
 	fi
 	
-	update_config_from_url "$config_file" "$subscribe_url" "0" "$subscribe_enabled"
+	if [ "${DUCK_EDITOR_APPLY:-0}" != 1 ]; then
+		update_config_from_url "$config_file" "$subscribe_url" "0" "$subscribe_enabled"
+	fi
 
 	"$PROG" validate -c "$config_file" || {
 		log_message "Invalid configuration file: $config_file" "error"
@@ -181,11 +184,20 @@ service_triggers() {
 	procd_add_reload_trigger "$CONF"
 }
 
+editor_apply() {
+	if /etc/init.d/duck running; then
+		hot_reload
+	else
+		DUCK_EDITOR_APPLY=1 start
+	fi
+}
+
 hot_reload() {
 	if /etc/init.d/duck running; then
 		log_message "Hot-reloading InfinityDuck"
 		"$PROG" reload "$(cat /var/run/dae.pid)"
 	else
 		log_message "InfinityDuck is not running, cannot hot-reload" "warn"
+		return 1
 	fi
 }

@@ -1,0 +1,2 @@
+# Generated/vendor assets include intentional whitespace inside template strings.
+luci-app-duck/htdocs/luci-static/resources/monaco-editor/** linguist-vendored -whitespace

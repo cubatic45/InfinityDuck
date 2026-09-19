@@ -1,14 +1,11 @@
 name: Build OpenWrt APK
+
 on:
   workflow_dispatch:
-    inputs:
-      openwrt_version:
-        description: OpenWrt 25.12 release (x86/64)
-        default: '25.12.5'
-        required: true
-        type: string
   push:
-    branches: [main, 'fix/editor-save-and-monaco-upgrade']
+    branches:
+      - main
+      - fix/editor-save-and-monaco-upgrade
     paths:
       - 'duck/**'
       - 'luci-app-duck/**'
@@ -18,54 +15,61 @@ on:
       - 'package*.json'
       - '.github/workflows/apk.yml'
       - '.github/workflows/editor.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'duck/**'
+      - 'luci-app-duck/**'
+      - 'scripts/apk/**'
+      - 'scripts/editor/**'
+      - 'tests/**'
+      - 'package*.json'
+      - '.github/workflows/apk.yml'
+      - '.github/workflows/editor.yml'
+
 permissions:
   contents: read
+
 concurrency:
   group: openwrt-apk-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   editor-tests:
     uses: ./.github/workflows/editor.yml
+
   apk:
-    name: OpenWrt APK (x86_64)
+    name: OpenWrt 25.12 APK (x86_64)
     needs: editor-tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     timeout-minutes: 120
-    env:
-      OPENWRT_VERSION: ${{ inputs.openwrt_version || '25.12.5' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - name: Install SDK build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential clang llvm flex bison gawk gettext \
-            git libncurses-dev libssl-dev python3 python3-setuptools python3-pyelftools \
-            rsync swig unzip zlib1g-dev file wget curl ca-certificates libelf-dev \
-            zstd quilt subversion xsltproc libxml-parser-perl libboost-dev bc
-      - name: Download and verify SDK
-        run: bash scripts/apk/download-sdk.sh
-      - uses: actions/cache@v4
-        with:
-          path: sdk/dl
-          key: openwrt-apk-dl-${{ runner.os }}-${{ env.OPENWRT_VERSION }}-${{ hashFiles('duck/Makefile') }}
-          restore-keys: |
-            openwrt-apk-dl-${{ runner.os }}-${{ env.OPENWRT_VERSION }}-
-      - name: Configure package build
-        run: bash scripts/apk/configure-sdk.sh
-      - name: Compile APK packages
-        run: |
-          set -o pipefail
-          make -C sdk package/duck/compile -j2 V=s 2>&1 | tee artifacts/duck-build.log
-          make -C sdk package/luci-app-duck/compile -j2 V=s 2>&1 | tee artifacts/luci-build.log
-      - name: Verify APK packages
+
+      - name: Build packages with the OpenWrt SDK
+        uses: sbwml/openwrt-gh-action-sdk@a5b2472e626ba279c75c77f82a4e5385303f9561 # go1.26
+        env:
+          ARCH: x86_64-openwrt-25.12
+          FEEDNAME: infinityduck_ci
+          PACKAGES: duck luci-app-duck
+          NO_REFRESH_CHECK: true
+          BUILD_LOG: 1
+          V: s
+
+      - name: Verify APK outputs
         run: bash scripts/apk/verify-packages.sh
-      - name: Upload APK packages and build records
+
+      - name: Upload APK packages and build logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: infinityduck-openwrt-${{ env.OPENWRT_VERSION }}-x86_64-${{ github.sha }}
-          path: artifacts/
+          name: infinityduck-openwrt-25.12-x86_64-${{ github.sha }}
+          path: |
+            artifacts/
+            logs/
           if-no-files-found: error
           retention-days: 14

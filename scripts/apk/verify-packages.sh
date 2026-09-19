@@ -1,23 +1,44 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p artifacts/packages
-for package in duck duck-geoip duck-geosite luci-app-duck luci-i18n-duck-zh-cn; do
-  mapfile -t files < <(find sdk/bin -type f -name "${package}-[0-9]*.apk")
-  [[ ${#files[@]} == 1 ]] || { echo "Expected one APK for $package, got ${#files[@]}"; exit 1; }
-  cp "${files[0]}" artifacts/packages/
+
+package_dir=bin/packages/x86_64/infinityduck_ci
+artifact_dir=artifacts/packages
+required_packages=(duck duck-geoip duck-geosite luci-app-duck)
+
+[[ -d $package_dir ]] || {
+  echo "APK output directory does not exist: $package_dir" >&2
+  exit 1
+}
+
+mkdir -p "$artifact_dir"
+
+for package in "${required_packages[@]}"; do
+  mapfile -t files < <(find "$package_dir" -maxdepth 1 -type f -name "${package}-[0-9]*.apk" -print)
+  if [[ ${#files[@]} -ne 1 ]]; then
+    echo "Expected one APK for $package, found ${#files[@]}" >&2
+    find "$package_dir" -maxdepth 1 -type f -name '*.apk' -print >&2
+    exit 1
+  fi
+  cp "${files[0]}" "$artifact_dir/"
 done
-mapfile -t apk_tools < <(find sdk/staging_dir/host/bin -maxdepth 1 -name apk -type f)
-[[ ${#apk_tools[@]} == 1 ]]
-apk=$(realpath "${apk_tools[0]}")
-for file in artifacts/packages/*.apk; do
-  "$apk" adbdump "$file" > "$file.metadata.txt"
-done
-(cd artifacts/packages && sha256sum ./*.apk > SHA256SUMS)
+
+# Keep generated translation APKs when the SDK enables LuCI languages.
+find "$package_dir" -maxdepth 1 -type f -name 'luci-i18n-duck-*.apk' \
+  -exec cp {} "$artifact_dir/" \;
+
+(
+  cd "$artifact_dir"
+  sha256sum ./*.apk > SHA256SUMS
+)
+
 {
-  echo '### Built APK packages'
+  echo '### OpenWrt APK build'
   echo
-  echo 'Target: OpenWrt 25.12 x86/64. Editor regression tests and APK format checks passed.'
-  echo 'These are package-build checks, not an eBPF dataplane/device test.'
+  echo 'Target: OpenWrt 25.12 x86/64.'
+  echo 'Editor regression tests and package compilation passed.'
+  echo 'This workflow does not exercise the eBPF dataplane on an OpenWrt device.'
   echo
-  ls -lh artifacts/packages/*.apk
+  echo '```text'
+  ls -lh "$artifact_dir"/*.apk
+  echo '```'
 } >> "${GITHUB_STEP_SUMMARY:-artifacts/summary.md}"

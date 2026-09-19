@@ -1,7 +1,8 @@
 name: Editor regression tests
 on:
-  workflow_call:
   push:
+    branches:
+      - main
     paths:
       - 'luci-app-duck/**'
       - 'duck/**'

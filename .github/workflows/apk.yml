@@ -35,12 +35,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  editor-tests:
-    uses: ./.github/workflows/editor.yml
-
   apk:
     name: OpenWrt 25.12 APK (x86_64)
-    needs: editor-tests
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

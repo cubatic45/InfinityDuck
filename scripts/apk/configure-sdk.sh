@@ -9,12 +9,10 @@ sed -i \
   -e 's#https://git.openwrt.org/feed/routing.git#https://github.com/openwrt/routing.git#' \
   -e 's#https://git.openwrt.org/feed/telephony.git#https://github.com/openwrt/telephony.git#' feeds.conf.default
 ./scripts/feeds update -a
-# The release SDK already contains the base package tree. Installing its
-# synthetic `base` feed again duplicates package definitions and produces
-# Kconfig self-dependencies (for example nginx modules depending on themselves).
-for feed in packages luci routing telephony video; do
-  ./scripts/feeds install -a -p "$feed"
-done
+# Install only the source closure needed by these packages. Loading every feed
+# package into the SDK's Kconfig also loads unrelated optional-package cycles.
+# The named installs recursively add their own source dependencies.
+./scripts/feeds install golang luci-base ca-bundle jshn flock
 # Copy the checkout tested by Actions; never clone the package default branch.
 cp -a "$repo_dir/duck" package/duck
 cp -a "$repo_dir/luci-app-duck" package/luci-app-duck

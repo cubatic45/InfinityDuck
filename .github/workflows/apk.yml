@@ -1,0 +1,70 @@
+name: Build OpenWrt APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'duck/**'
+      - 'luci-app-duck/**'
+      - 'scripts/apk/**'
+      - 'scripts/editor/**'
+      - 'tests/**'
+      - 'package*.json'
+      - '.github/workflows/apk.yml'
+      - '.github/workflows/editor.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'duck/**'
+      - 'luci-app-duck/**'
+      - 'scripts/apk/**'
+      - 'scripts/editor/**'
+      - 'tests/**'
+      - 'package*.json'
+      - '.github/workflows/apk.yml'
+      - '.github/workflows/editor.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openwrt-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: OpenWrt 25.12 APK (x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build packages with the OpenWrt SDK
+        uses: sbwml/openwrt-gh-action-sdk@a5b2472e626ba279c75c77f82a4e5385303f9561 # go1.26
+        env:
+          ARCH: x86_64-openwrt-25.12
+          FEEDNAME: infinityduck_ci
+          PACKAGES: duck luci-app-duck
+          NO_REFRESH_CHECK: true
+          BUILD_LOG: 1
+          V: s
+
+      - name: Verify APK outputs
+        run: bash scripts/apk/verify-packages.sh
+
+      - name: Upload APK packages and build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: infinityduck-openwrt-25.12-x86_64-${{ github.sha }}
+          path: |
+            artifacts/
+            logs/
+          if-no-files-found: error
+          retention-days: 14

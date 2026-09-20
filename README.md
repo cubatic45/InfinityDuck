@@ -11,10 +11,63 @@ This project is based on [luci-app-dae](https://github.com/immortalwrt/luci/tree
 - Latest commit version of dae core
 - Reversed log order with scrollbar
 - Log highlighting and filtering
-- Simple config file validation
+- Daemon-backed configuration validation and atomic saves
 - Fetch config from remote
 - Startup deplay
 - Schedule restart
+
+## Configuration editor
+
+The editor uses Monaco 0.56.0 with locally bundled ESM assets and an editor
+worker. It follows the LuCI language for simplified/traditional Chinese and
+otherwise uses English. If the advanced editor cannot load, a plain text area
+remains available. Unsaved edits are indicated, and leaving the page prompts
+before discarding them.
+
+`Save` validates with `dae validate` and saves without changing service state.
+`Save & Apply` validates, saves, and hot-reloads a running service; a stopped,
+enabled service is started without downloading a subscription over the edited
+file or waiting for the boot delay. Errors distinguish validation failure from
+a configuration that was saved but could not be applied. `Reset` restores the
+last successfully saved content.
+
+Validation runs against a private temporary file in `/etc/duck` to preserve
+relative include paths. The original entry file is replaced atomically only
+after validation succeeds, with permissions `0600`. A write-only `duck.config`
+RPC serializes editor transactions with `flock`. Background work and status
+polling keep long validation/reload operations out of LuCI's short RPC timeout.
+Status records expire after an hour on subsequent saves and on reboot.
+The editor intentionally supports the default `/etc/duck/config.dae` entry;
+custom UCI entry paths are rejected rather than silently editing another file.
+
+Upgrade both `duck` (including the updated init script) and `luci-app-duck`
+together. The LuCI package adds `jshn` and `flock` dependencies. After manually
+replacing files, restart `rpcd` and reload LuCI to register the new RPC/ACL.
+
+### Rebuilding editor assets and testing
+
+Generated assets are committed, so normal OpenWrt package builds do not need
+Node.js and router pages do not fetch code from a CDN. Maintainers can rebuild
+using Node.js 20 and the locked npm dependencies:
+
+```sh
+npm ci
+npm run build:editor
+npm test
+npx playwright install chromium
+npm run test:browser
+```
+
+The Node tests require `busybox`, `jq`, and `flock`. They exercise the real shell
+transaction with isolated paths, a test JSON adapter, and mocked dae/service
+commands. Browser tests load the actual generated Monaco assets and exercise
+editing, a worker-backed diff, localization, fallback, and disposal. These tests
+do not substitute for an OpenWrt package build or real rpcd/procd/dae integration
+on a router. CI also checks that rebuilding produces the committed assets.
+
+Monaco is pinned to 0.56.0; DOMPurify is overridden to 3.4.15 to avoid the
+advisories affecting the dependency version requested by Monaco. Keep the lock
+file, generated assets, and third-party license notices in sync when updating.
 
 ## Install
 1. Add feed

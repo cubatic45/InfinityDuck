@@ -211,3 +211,47 @@ msgstr ""
 #: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/settings.js:50
 msgid "eBPF-based Linux high-performance transparent proxy solution."
 msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unsaved changes"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "No unsaved changes"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Validating configuration…"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Applying configuration…"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unexpected configuration service response"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration was not applied"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration saved and applied."
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration saved."
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration is validated before saving. Apply hot-reloads a running service."
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Advanced editor could not be loaded. You can still edit and save using the text area."
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unable to confirm completion. Reload the page to check configuration and service status."
+msgstr ""

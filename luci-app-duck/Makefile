@@ -4,13 +4,13 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_VERSION:=1.3.5
+PKG_VERSION:=1.4.0
 
 PKG_LICENSE:=Apache-2.0
 PKG_MAINTAINER:=JohnsonRan <me@ihtw.moe>
 
 LUCI_TITLE:=Another LuCI app for dae
-LUCI_DEPENDS:=+duck +duck-geoip +duck-geosite
+LUCI_DEPENDS:=+duck +duck-geoip +duck-geosite +jshn +flock
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

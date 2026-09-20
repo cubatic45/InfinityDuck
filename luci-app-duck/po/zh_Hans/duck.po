@@ -218,3 +218,47 @@ msgstr "未知错误：%s"
 #: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/settings.js:50
 msgid "eBPF-based Linux high-performance transparent proxy solution."
 msgstr "基于 eBPF 的 Linux 高性能透明代理解决方案。"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unsaved changes"
+msgstr "有未保存的更改"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "No unsaved changes"
+msgstr "没有未保存的更改"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Validating configuration…"
+msgstr "正在校验配置…"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Applying configuration…"
+msgstr "正在应用配置…"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unexpected configuration service response"
+msgstr "配置服务返回了无效响应"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration was not applied"
+msgstr "配置未能应用"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration saved and applied."
+msgstr "配置已保存并应用。"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration saved."
+msgstr "配置已保存。"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Configuration is validated before saving. Apply hot-reloads a running service."
+msgstr "保存前会校验配置。应用时将热重载正在运行的服务。"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Advanced editor could not be loaded. You can still edit and save using the text area."
+msgstr "高级编辑器加载失败。您仍可使用文本框编辑并保存配置。"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Unable to confirm completion. Reload the page to check configuration and service status."
+msgstr "无法确认操作是否完成。请重新加载页面，检查配置及服务状态。"

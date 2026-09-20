@@ -253,5 +253,17 @@ msgid "Advanced editor could not be loaded. You can still edit and save using th
 msgstr ""
 
 #: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Format Code"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Formatted"
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Failed to format code: "
+msgstr ""
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
 msgid "Unable to confirm completion. Reload the page to check configuration and service status."
 msgstr ""

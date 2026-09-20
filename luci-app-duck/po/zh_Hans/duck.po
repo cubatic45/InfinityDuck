@@ -260,5 +260,17 @@ msgid "Advanced editor could not be loaded. You can still edit and save using th
 msgstr "高级编辑器加载失败。您仍可使用文本框编辑并保存配置。"
 
 #: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Format Code"
+msgstr "格式化代码"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Formatted"
+msgstr "已格式化"
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
+msgid "Failed to format code: "
+msgstr "格式化代码失败："
+
+#: applications/luci-app-duck/htdocs/luci-static/resources/view/duck/config.js
 msgid "Unable to confirm completion. Reload the page to check configuration and service status."
 msgstr "无法确认操作是否完成。请重新加载页面，检查配置及服务状态。"

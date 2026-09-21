@@ -17,6 +17,7 @@ test('duck uses an official dae full-source release', () => {
   );
   assert.match(makefile, /^PKG_HASH:=[0-9a-f]{64}$/m);
   assert.match(makefile, /^DAE_GOEXPERIMENT:=newinliner,simd,heapminimum512kib,randomizedheapbase64$/m);
+  assert.match(makefile, /GO_PKG_EXCLUDES:=[\s\S]*cmd\/dae-ebpf-audit[\s\S]*cmd\/generators[\s\S]*scripts\/semantic-refactor-quic-helper/);
   assert.doesNotMatch(makefile, /olicesx\/dae|PKG_SOURCE_VERSION/);
   assert.match(packageTest, new RegExp(`^expected_dae_version=${version}$`, 'm'));
 });

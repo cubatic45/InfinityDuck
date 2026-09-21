@@ -1,0 +1,3 @@
+Source: https://github.com/QiuSimons/luci-app-honk
+Commit: 9452fc6e54a02aec5a1a0c8cf69df920745f9d11
+Paths: luci-app-honk/root/www/luci-static/resources/honk/{lib,addon,mode/dae}

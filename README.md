@@ -7,7 +7,7 @@ This project is based on [luci-app-dae](https://github.com/immortalwrt/luci/tree
 </div>
 
 ## New Features:
-- Powerful config editor provided by monaco-editor
+- Dae-aware CodeMirror editor and formatter from luci-app-honk
 - Latest commit version of dae core
 - Reversed log order with scrollbar
 - Log highlighting and filtering
@@ -18,11 +18,13 @@ This project is based on [luci-app-dae](https://github.com/immortalwrt/luci/tree
 
 ## Configuration editor
 
-The editor uses Monaco 0.56.0 with locally bundled ESM assets and an editor
-worker. It follows the LuCI language for simplified/traditional Chinese and
-otherwise uses English. If the advanced editor cannot load, a plain text area
+The editor uses the CodeMirror 5 editor, dae mode, bracket matching, folding,
+and formatter from [QiuSimons/luci-app-honk](https://github.com/QiuSimons/luci-app-honk).
+The assets are bundled locally and use ordinary LuCI script loading without
+ESM or web workers. If the advanced editor cannot load, a plain text area
 remains available. Unsaved edits are indicated, and leaving the page prompts
-before discarding them.
+before discarding them. `Format Code` normalizes common dae operators, matcher
+prefixes, commas, and indentation without changing quoted strings or comments.
 
 `Save` validates with `dae validate` and saves without changing service state.
 `Save & Apply` validates, saves, and hot-reloads a running service; a stopped,
@@ -44,15 +46,13 @@ Upgrade both `duck` (including the updated init script) and `luci-app-duck`
 together. The LuCI package adds `jshn` and `flock` dependencies. After manually
 replacing files, restart `rpcd` and reload LuCI to register the new RPC/ACL.
 
-### Rebuilding editor assets and testing
+### Testing
 
-Generated assets are committed, so normal OpenWrt package builds do not need
-Node.js and router pages do not fetch code from a CDN. Maintainers can rebuild
-using Node.js 20 and the locked npm dependencies:
+Editor assets are committed, so OpenWrt package builds do not need Node.js and
+router pages do not fetch code from a CDN. Run the tests with Node.js 20:
 
 ```sh
 npm ci
-npm run build:editor
 npm test
 npx playwright install chromium
 npm run test:browser
@@ -60,14 +60,11 @@ npm run test:browser
 
 The Node tests require `busybox`, `jq`, and `flock`. They exercise the real shell
 transaction with isolated paths, a test JSON adapter, and mocked dae/service
-commands. Browser tests load the actual generated Monaco assets and exercise
-editing, a worker-backed diff, localization, fallback, and disposal. These tests
+commands. Browser tests load the actual CodeMirror and dae-mode assets and
+exercise formatting, editing, save/reset, fallback, and disposal. These tests
 do not substitute for an OpenWrt package build or real rpcd/procd/dae integration
-on a router. CI also checks that rebuilding produces the committed assets.
-
-Monaco is pinned to 0.56.0; DOMPurify is overridden to 3.4.15 to avoid the
-advisories affecting the dependency version requested by Monaco. Keep the lock
-file, generated assets, and third-party license notices in sync when updating.
+on a router. The vendored source commit and CodeMirror MIT license are recorded
+next to the editor assets.
 
 ## Install
 1. Add feed

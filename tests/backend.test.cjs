@@ -15,6 +15,7 @@ function fixture(t) {
  write('uci','printf "%s" "${CUSTOM_CONFIG:-$FIXTURE/config/config.dae}"\n');
  write('dae',`printf 'validate:%s\\n' "$3" >> "$FIXTURE/trace"
 [ "$1" = validate ] && [ "$2" = -c ] || exit 9
+[ "\${3##*.}" = dae ] || { echo "invalid config filename $3: must has suffix .dae" >&2; exit 11; }
 [ "$(stat -c %a "$3")" = 600 ] || exit 10
 [ "$FAIL_VALIDATE" != 1 ] || { echo 'line 3: invalid config' >&2; exit 1; }
 [ "$SLOW_VALIDATE" != 1 ] || /bin/sleep 1
@@ -28,6 +29,7 @@ case "$1" in
 esac
 `);
  write('mktemp','[ "$FAIL_TEMP" != 1 ] || exit 1\nexec /usr/bin/mktemp "$@"\n');
+ write('ln','[ "$FAIL_LINK" != 1 ] || exit 1\nexec /bin/ln "$@"\n');
  write('sleep','exit 0\n');
  write('mv','[ "$FAIL_RENAME" != 1 ] || [ "$3" != "$FIXTURE/config/config.dae" ] || exit 1\nexec /bin/mv "$@"\n');
  const script=backend.replace('/usr/share/libubox/jshn.sh',path.resolve('tests/fixtures/jshn.sh'))
@@ -56,7 +58,7 @@ test('backend validates before atomic replacement, preserves bytes and permissio
  assert.equal(fs.readFileSync(f.config,'utf8'),content);
  assert.equal(fs.readFileSync(f.dir+'/validated','utf8'),content);
  assert.equal(fs.statSync(f.config).mode&0o777,0o600);
- assert.match(f.trace(),/validate:.*\.editor-.*\neditor_apply\nrunning\n/);
+ assert.match(f.trace(),/validate:.*\.editor-.*\.dae\neditor_apply\nrunning\n/);
  assert.deepEqual(fs.readdirSync(f.dir+'/config'),['config.dae']);
  assert.equal(spawnSync('flock',['-n',f.dir+'/locks/duck-editor.lock','true']).status,0);
 });
@@ -87,7 +89,7 @@ test('disabled/stopped service is not reported as successfully applied',t=>{
 });
 test('temp creation and replacement failures keep original and release lock',t=>{
  const f=fixture(t);
- for(const env of [{FAIL_TEMP:'1'},{FAIL_RENAME:'1'}]) {
+ for(const env of [{FAIL_TEMP:'1'},{FAIL_LINK:'1'},{FAIL_RENAME:'1'}]) {
   assert.equal(f.run('new',true,env).saved,false);
   assert.equal(fs.readFileSync(f.config,'utf8'),'ORIGINAL\n');
   assert.equal(spawnSync('flock',['-n',f.dir+'/locks/duck-editor.lock','true']).status,0);

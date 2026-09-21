@@ -7,6 +7,7 @@ test('OpenWrt package carries the honk CodeMirror dae editor', () => {
   const editor = fs.readFileSync('luci-app-duck/htdocs/luci-static/resources/duck-editor/lib/codemirror.js', 'utf8');
   const mode = fs.readFileSync('luci-app-duck/htdocs/luci-static/resources/duck-editor/mode/dae/dae.js', 'utf8');
   assert.match(makefile, /^PKG_VERSION:=1\.5\.0$/m);
+  assert.match(makefile, /^PKG_RELEASE:=2$/m);
   assert.match(makefile, /^LUCI_MINIFY_JS:=0$/m);
   assert.match(makefile, /^LUCI_MINIFY_CSS:=0$/m);
   assert.match(editor, /CodeMirror\.version = "5\.65\.21"/);

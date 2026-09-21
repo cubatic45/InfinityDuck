@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=1.5.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 # Keep the vendored, browser-tested editor bytes intact. LuCI's legacy
 # minifiers otherwise rewrite every JavaScript and CSS resource while packing.

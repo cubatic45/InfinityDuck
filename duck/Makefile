@@ -5,13 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=duck
-PKG_VERSION:=2026.09.16
-PKG_RELEASE:=2
+DAE_VERSION:=2.1.1
+DAE_RELEASE_DATE:=2026.09.18
+PKG_VERSION:=$(DAE_RELEASE_DATE)
+PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
-PKG_SOURCE_VERSION:=4e0c909052fc088f695b9ccd833a16e78cae0983
-PKG_MIRROR_HASH:=3e19e742045c3ba24f91ca0b4bcae4ec6b713129b6378348c8c6ecf4d3dbd0b3
+PKG_SOURCE:=dae-full-src.tar.xz
+PKG_SOURCE_URL:=https://github.com/daeuniverse/dae/releases/download/v$(DAE_VERSION)
+PKG_HASH:=7c91494a999a24e91869e8e20e26ed8171dd4eedbcb847d1b04d15a6aeb54f44
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
@@ -24,9 +25,10 @@ PKG_BUILD_FLAGS:=no-mips16
 GO_PKG:=github.com/daeuniverse/dae
 GO_PKG_EXCLUDES:=control/kern/tests
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/cmd.Version=$(PKG_VERSION) \
+	$(GO_PKG)/cmd.Version=$(DAE_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=1024
 GO_PKG_TAGS:=trace
+DAE_GOEXPERIMENT:=newinliner,simd,heapminimum512kib,randomizedheapbase64
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/bpf.mk
@@ -50,13 +52,11 @@ define Download/geosite
   HASH:=b054483a82f678440e90c2686e5280c5514ec8c9ae446e3c3ed3e17c82a54521
 endef
 
-UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
-
 define Package/duck/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  URL:=https://github.com/olicesx/dae/tree/kdae
+  URL:=https://github.com/daeuniverse/dae
 endef
 
 define Package/duck
@@ -108,7 +108,9 @@ duck_CFLAGS:= \
 	-I$(BPF_HEADERS_DIR)/arch/$(BPF_KARCH)/include/asm/mach-generic
 
 define Build/Prepare
-	$(call Build/Prepare/Default)
+	$(INSTALL_DIR) $(PKG_BUILD_DIR)
+	$(STAGING_DIR_HOST)/bin/xz -dc $(DL_DIR)/$(PKG_SOURCE) | \
+		$(TAR) -C $(PKG_BUILD_DIR) -xf -
 ifneq ($(CONFIG_PACKAGE_duck-geoip),)
 	$(call Download,geoip)
 endif
@@ -123,13 +125,15 @@ define Build/Compile
 		$(GO_GENERAL_BUILD_CONFIG_VARS) \
 		$(GO_PKG_BUILD_CONFIG_VARS) \
 		$(GO_PKG_BUILD_VARS) \
+		GOEXPERIMENT="$(DAE_GOEXPERIMENT)" \
 		BPF_CLANG="$(CLANG)" \
 		BPF_STRIP_FLAG="-strip=$(LLVM_STRIP)" \
 		BPF_CFLAGS="$(duck_CFLAGS)" \
 		BPF_TARGET="bpfel,bpfeb" \
 		BPF_TRACE_TARGET="$(GO_ARCH)" ; \
-		go generate $(PKG_BUILD_DIR)/control/control.go ; \
-		go generate $(PKG_BUILD_DIR)/trace/trace.go ; \
+		GOOS= GOARCH= GOARM= go generate $(PKG_BUILD_DIR)/common/consts/ebpf.go ; \
+		GOOS= GOARCH= GOARM= go generate $(PKG_BUILD_DIR)/control/control.go ; \
+		GOOS= GOARCH= GOARM= go generate $(PKG_BUILD_DIR)/trace/trace.go ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
 endef

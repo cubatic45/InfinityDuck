@@ -36,7 +36,7 @@ concurrency:
 
 jobs:
   apk:
-    name: OpenWrt 25.12 APK (x86_64)
+    name: Official dae OpenWrt 25.12 APK (x86_64)
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -44,6 +44,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify official dae release
+        id: dae
+        run: bash scripts/apk/verify-upstream.sh
 
       - name: Build packages with the OpenWrt SDK
         uses: sbwml/openwrt-gh-action-sdk@a5b2472e626ba279c75c77f82a4e5385303f9561 # go1.26
@@ -62,7 +66,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: infinityduck-openwrt-25.12-x86_64-${{ github.sha }}
+          name: infinityduck-dae-${{ steps.dae.outputs.version }}-openwrt-25.12-x86_64-${{ github.sha }}
           path: |
             artifacts/
             logs/

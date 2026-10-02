@@ -9,7 +9,7 @@ hash=$(sed -n 's/^PKG_MIRROR_HASH:=//p' "$makefile")
 [[ $version =~ ^[0-9]{4}\.[0-9]{2}\.[0-9]{2}$ ]]
 [[ $commit =~ ^[0-9a-f]{40}$ ]]
 [[ $hash =~ ^[0-9a-f]{64}$ ]]
-grep -qx 'PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz' "$makefile"
+grep -qx 'PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz' "$makefile"
 grep -qx 'PKG_SOURCE_PROTO:=git' "$makefile"
 grep -qx 'PKG_SOURCE_URL:=https://github.com/olicesx/dae.git' "$makefile"
 

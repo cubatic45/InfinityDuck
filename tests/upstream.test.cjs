@@ -7,7 +7,7 @@ test('duck pins kdae with a verified git source archive', () => {
   const packageTest = fs.readFileSync('duck/test.sh', 'utf8');
   const version = makefile.match(/^PKG_VERSION:=(\d{4}\.\d{2}\.\d{2})$/m)?.[1];
   assert.ok(version);
-  assert.match(makefile, /^PKG_SOURCE:=\$\(PKG_NAME\)-\$\(PKG_VERSION\)\.tar\.xz$/m);
+  assert.match(makefile, /^PKG_SOURCE:=\$\(PKG_NAME\)-\$\(PKG_VERSION\)\.tar\.gz$/m);
   assert.match(makefile, /^PKG_SOURCE_PROTO:=git$/m);
   assert.match(makefile, /^PKG_SOURCE_URL:=https:\/\/github\.com\/olicesx\/dae\.git$/m);
   assert.match(makefile, /^PKG_SOURCE_VERSION:=[0-9a-f]{40}$/m);

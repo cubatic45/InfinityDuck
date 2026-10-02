@@ -24,5 +24,5 @@ git -C "$work/$subdir" submodule update --init --recursive >&2
 rm -rf "$work/$subdir/.git" "$work/$subdir/.gitmodules"
 tar --numeric-owner --owner=0 --group=0 --mode=a-s --sort=name \
   --mtime="$timestamp" -C "$work" -c "$subdir" | \
-  xz -zc -7e > "$work/source.tar.xz"
-sha256sum "$work/source.tar.xz" | cut -d ' ' -f 1
+  gzip -nc > "$work/source.tar.gz"
+sha256sum "$work/source.tar.gz" | cut -d ' ' -f 1

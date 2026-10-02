@@ -1,6 +1,6 @@
 #!/bin/sh
 
-expected_dae_version=2.1.1
+expected_dae_version=2026.10.02
 
 case "$1" in
 	"dae")

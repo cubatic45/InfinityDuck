@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 022
 
 # Match OpenWrt 25.12 include/download.mk's rawgit archive format,
 # including pinned submodules and .gitattributes export rules.
@@ -19,7 +20,9 @@ tar --numeric-owner --owner=0 --group=0 --ignore-failed-read \
   -C "$work/$subdir" -rf "$work/source.tar" .git .gitmodules 2>/dev/null
 rm -rf "$work/$subdir"
 mkdir "$work/$subdir"
-tar -C "$work/$subdir" -xf "$work/source.tar"
+# GNU tar preserves archive modes for root by default. Apply the SDK user's
+# umask explicitly so local root runs and unprivileged CI runs agree.
+tar --no-same-permissions -C "$work/$subdir" -xf "$work/source.tar"
 git -C "$work/$subdir" submodule update --init --recursive >&2
 rm -rf "$work/$subdir/.git" "$work/$subdir/.gitmodules"
 tar --numeric-owner --owner=0 --group=0 --mode=a-s --sort=name \

@@ -25,4 +25,8 @@ rm -rf "$work/$subdir/.git" "$work/$subdir/.gitmodules"
 tar --numeric-owner --owner=0 --group=0 --mode=a-s --sort=name \
   --mtime="$timestamp" -C "$work" -c "$subdir" | \
   gzip -nc > "$work/source.tar.gz"
+if [[ -n ${KDAE_SOURCE_ARCHIVE:-} ]]; then
+  mkdir -p "$(dirname "$KDAE_SOURCE_ARCHIVE")"
+  cp "$work/source.tar.gz" "$KDAE_SOURCE_ARCHIVE"
+fi
 sha256sum "$work/source.tar.gz" | cut -d ' ' -f 1

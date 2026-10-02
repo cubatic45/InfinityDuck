@@ -47,6 +47,8 @@ jobs:
 
       - name: Verify pinned kdae source
         id: dae
+        env:
+          KDAE_SOURCE_ARCHIVE: artifacts/kdae-source.tar.gz
         run: bash scripts/apk/verify-upstream.sh
 
       - name: Build packages with the OpenWrt SDK

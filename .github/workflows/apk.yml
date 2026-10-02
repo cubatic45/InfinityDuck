@@ -36,7 +36,7 @@ concurrency:
 
 jobs:
   apk:
-    name: Official dae OpenWrt 25.12 APK (x86_64)
+    name: kdae OpenWrt 25.12 APK (x86_64)
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -45,8 +45,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify official dae release
+      - name: Verify pinned kdae source
         id: dae
+        env:
+          KDAE_SOURCE_ARCHIVE: artifacts/kdae-source.tar.gz
         run: bash scripts/apk/verify-upstream.sh
 
       - name: Build packages with the OpenWrt SDK
@@ -66,7 +68,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: infinityduck-dae-${{ steps.dae.outputs.version }}-openwrt-25.12-x86_64-${{ github.sha }}
+          name: infinityduck-kdae-${{ steps.dae.outputs.version }}-openwrt-25.12-x86_64-${{ github.sha }}
           path: |
             artifacts/
             logs/

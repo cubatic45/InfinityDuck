@@ -14,18 +14,18 @@ on:
       - 'package*.json'
       - '.github/workflows/apk.yml'
       - '.github/workflows/editor.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'duck/**'
-      - 'luci-app-duck/**'
-      - 'scripts/apk/**'
-      - 'scripts/editor/**'
-      - 'tests/**'
-      - 'package*.json'
-      - '.github/workflows/apk.yml'
-      - '.github/workflows/editor.yml'
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'duck/**'
+  #     - 'luci-app-duck/**'
+  #     - 'scripts/apk/**'
+  #     - 'scripts/editor/**'
+  #     - 'tests/**'
+  #     - 'package*.json'
+  #     - '.github/workflows/apk.yml'
+  #     - '.github/workflows/editor.yml'
 
 permissions:
   contents: read

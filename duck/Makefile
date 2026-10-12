@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=duck
-DAE_VERSION:=2.1.1
-DAE_RELEASE_DATE:=2026.09.18
-PKG_VERSION:=$(DAE_RELEASE_DATE)
+PKG_VERSION:=2026.10.02
 PKG_RELEASE:=1
 
-PKG_SOURCE:=dae-full-src.tar.xz
-PKG_SOURCE_URL:=https://github.com/daeuniverse/dae/releases/download/v$(DAE_VERSION)
-PKG_HASH:=7c91494a999a24e91869e8e20e26ed8171dd4eedbcb847d1b04d15a6aeb54f44
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
+PKG_SOURCE_VERSION:=4e0c909052fc088f695b9ccd833a16e78cae0983
+PKG_MIRROR_HASH:=de5f608f3405072c887f068e1f2bfd6d78ee13ea1eea65711578bad955495e35
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
@@ -29,7 +29,7 @@ GO_PKG_EXCLUDES:= \
 	cmd/generators \
 	scripts/semantic-refactor-quic-helper
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/cmd.Version=$(DAE_VERSION) \
+	$(GO_PKG)/cmd.Version=$(PKG_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=1024
 GO_PKG_TAGS:=trace
 DAE_GOEXPERIMENT:=newinliner,simd,heapminimum512kib,randomizedheapbase64
@@ -60,7 +60,7 @@ define Package/duck/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  URL:=https://github.com/daeuniverse/dae
+  URL:=https://github.com/olicesx/dae/tree/kdae
 endef
 
 define Package/duck
@@ -112,9 +112,7 @@ duck_CFLAGS:= \
 	-I$(BPF_HEADERS_DIR)/arch/$(BPF_KARCH)/include/asm/mach-generic
 
 define Build/Prepare
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)
-	$(STAGING_DIR_HOST)/bin/xz -dc $(DL_DIR)/$(PKG_SOURCE) | \
-		$(TAR) -C $(PKG_BUILD_DIR) -xf -
+	$(call Build/Prepare/Default)
 ifneq ($(CONFIG_PACKAGE_duck-geoip),)
 	$(call Download,geoip)
 endif

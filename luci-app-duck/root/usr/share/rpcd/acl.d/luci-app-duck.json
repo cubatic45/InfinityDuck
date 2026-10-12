@@ -18,6 +18,7 @@
 				"/var/log/duck/duck.log": [ "write" ]
 			},
 			"ubus": {
+				"file": [ "write" ],
 				"duck.config": [ "save", "status" ]
 			},
 			"uci": [ "duck" ]

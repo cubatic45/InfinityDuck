@@ -191,7 +191,7 @@ return view.extend({
 			
 			return fs.read_direct('/var/log/duck/duck.log', 'text')
 				.then(function (content) {
-					var contentLines = content.trim().split(/\r?\n/);
+					var contentLines = content.trim() ? content.trim().split(/\r?\n/) : [];
 					var reversedContent = contentLines.reverse();
 
 					var formattedLines = reversedContent.map(function (line) {
@@ -286,14 +286,14 @@ return view.extend({
 						'click': function () {
 							ui.hideModal();
 
-							fs.write('/var/log/duck/duck.log', '')
+							return fs.write('/var/log/duck/duck.log', '')
 								.then(function () {
 									ui.addNotification(_('Success'), _('Log file has been cleared.'), 'success');
 
 									var logContainer = document.getElementById('log_textarea');
 									var preElem = logContainer.querySelector('pre');
 									if (preElem) {
-										preElem.innerHTML = _('Log file does not exist.');
+										preElem.innerHTML = _('Log is empty.');
 										logEntriesCache = null;
 										originalLogContent = '';
 									}

@@ -8,7 +8,7 @@ This project is based on [luci-app-dae](https://github.com/immortalwrt/luci/tree
 
 ## New Features:
 - Dae-aware CodeMirror editor and formatter from luci-app-honk
-- Official stable dae release from daeuniverse/dae
+- kdae core from the pinned olicesx/dae kdae branch
 - Reversed log order with scrollbar
 - Log highlighting and filtering
 - Daemon-backed configuration validation and atomic saves
